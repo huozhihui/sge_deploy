@@ -1,0 +1,27 @@
+{
+  "os": "centos7",
+  "state": "install",
+  "sge_install_dir": "/opt",
+  "sge_root_name": "sge",
+  "sge_admin_user": "root",
+  "repo": "http://mirrors.ronglian.com/repo/Centos-7.repo",
+  "sge_master_hosts": {
+    "username": "root",
+    "ip": "192.168.0.5",
+    "password": "root",
+    "hostname": "sge-master"
+  },
+  "sge_cluster_name": "rzl",
+  "nfs_server_host": {
+    "username": "root",
+    "ip": "192.168.0.16",
+    "password": "root",
+    "hostname": "nfs-server"
+  },
+  "nis_server_host": {
+    "username": "root",
+    "ip": "192.168.0.16",
+    "password": "root",
+    "hostname": "nis-server"
+  }
+}
