@@ -86,14 +86,7 @@ class Sge():
 
     def master(self, way="install"):
         task_name = "sge_master_%s" % way
-        aa = {
-            "float_ip": "10.61.104.23",
-            "ip": "192.168.0.5",
-            "hostname": "test-sge-master",
-            "username": "root",
-            "password": "root",
-        }
-        target_hosts = [self.sge_master_host, aa]
+        target_hosts = [self.sge_master_host]
         self._add_extra_var()
         return self._run_playbook(task_name, target_hosts, self.extra_var)
 
