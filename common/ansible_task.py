@@ -4,10 +4,9 @@ import os
 import random
 import string
 import time
-
 from common.ansible_api.ansible_api import AnsibleAPI
 
-ANSIBLE_CONFIG_PATH = "/Users/huozhihui/zhi/ansible_project/ansible_deploy"
+ANSIBLE_CONFIG_PATH = "/usr/local/ansible_deploy"
 
 
 class AnsibleError(Exception):
