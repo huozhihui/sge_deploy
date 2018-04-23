@@ -6,9 +6,9 @@ After=network.target
 [Service]
 User=root
 Group=root
-WorkingDirectory=/user/local/sge_deploy
-Environment="PATH=/user/local/sge_deploy/venv/bin"
-ExecStart=/user/local/sge_deploy/venv/bin/uwsgi --ini config.ini
+WorkingDirectory=/usr/local/sge_deploy
+Environment="PATH=/usr/local/sge_deploy/venv/bin"
+ExecStart=/usr/local/sge_deploy/venv/bin/uwsgi --ini config.ini
 
 [Install]
 WantedBy=multi-user.target
