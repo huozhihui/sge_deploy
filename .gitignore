@@ -2,7 +2,8 @@
 doc/
 venv/
 .idea/
-log/
+*.log
+*.pid
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
