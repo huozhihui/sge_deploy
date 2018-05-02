@@ -6,8 +6,8 @@ from ansible.inventory.manager import InventoryManager
 from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.executor.playbook_executor import PlaybookExecutor
-from common.ansible_api.options import options
-from common.ansible_api.result import results_callback
+from result import ResultsCollector
+from options import options
 
 
 class AnsibleAPI(object):
@@ -54,7 +54,7 @@ class AnsibleAPI(object):
 
         # actually run it
         tqm = None
-        self.callback = results_callback
+        self.callback = ResultsCollector()
         try:
             tqm = TaskQueueManager(
                 inventory=self.inventory,
@@ -74,7 +74,7 @@ class AnsibleAPI(object):
         run ansible palybook
         """
         try:
-            self.callback = results_callback
+            self.callback = ResultsCollector()
             self.variable_manager.extra_vars = extra_vars
             executor = PlaybookExecutor(
                 playbooks=playbooks, inventory=self.inventory, variable_manager=self.variable_manager,

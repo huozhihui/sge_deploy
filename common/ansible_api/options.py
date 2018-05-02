@@ -3,7 +3,7 @@ from collections import namedtuple
 Options = namedtuple('Options', ['listtags', 'listtasks', 'listhosts', 'syntax', 'connection', 'module_path', 'forks',
                                  'remote_user', 'private_key_file', 'ssh_common_args', 'ssh_extra_args',
                                  'sftp_extra_args', 'scp_extra_args', 'become', 'become_method', 'become_user',
-                                 'verbosity', 'check', 'diff'])
+                                 'verbosity', 'check', 'diff', 'timeout', 'log_path', 'host_key_checking'])
 
 options = Options(listtags=False,
                   listtasks=False,
@@ -23,4 +23,7 @@ options = Options(listtags=False,
                   become_user='root',
                   verbosity=None,
                   check=False,
-                  diff=False)
+                  diff=False,
+                  timeout=60,
+                  log_path="/var/log/ansible.log",
+                  host_key_checking=False)
