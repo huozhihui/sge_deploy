@@ -86,6 +86,21 @@ class AnsibleAPI(object):
             print "error:", e.message
 
     def get_result(self):
+        """
+
+        Returns: [
+            {"ip": "192.168.1.1", "status": "success", "task_name": ""},
+            {"ip": "192.168.1.2", "status": "failed", "task_name": "", "error": ""},
+        ]
+
+        """
+        res = []
+        for host, info in self.callback.host_result.items():
+            info["ip"] = host
+            res.append(info)
+        return res
+
+    def get_result2(self):
         self.results_raw = {'success': {}, 'failed': {}, 'unreachable': {}}
         for host, result in self.callback.host_unreachable.items():
             self.results_raw['unreachable'][host] = result._result['msg']
