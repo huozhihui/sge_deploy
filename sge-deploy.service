@@ -1,13 +1,13 @@
 # /etc/systemd/system/sge_deploy.service
 [Unit]
-Description=uWSGI instance to serve myproject
+Description=uWSGI instance to serve sge-deploy
 After=network.target
 
 [Service]
 User=root
 Group=root
 WorkingDirectory=/usr/local/sge_deploy
-Environment="PATH=/usr/local/sge_deploy/venv/bin"
+#Environment="PATH=/usr/local/sge_deploy/venv/bin"
 ExecStart=/usr/local/sge_deploy/venv/bin/uwsgi --ini config.ini
 
 [Install]

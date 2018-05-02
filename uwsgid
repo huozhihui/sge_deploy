@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ ! -n "$1" ];then            #$1：指该脚本后跟的第一个参数，-n：判断$1是否为非空，！：取相反
+    echo "Usages: sh uwsgid.sh [start|stop|restart]"
+    exit 0
+fi
+
+if [ $1 = start ];then            #如果第一个参数等于start，执行下面命令
+    psid=`ps aux | grep "uwsgi" | grep -v "grep" | wc -l`        
+    #上面执行了启动之后，判断启动是否正常，grep -v过滤掉“grep”，使用wc -l查看输出几行
+    if [[ $psid -gt 4 ]];then
+        echo "uwsgi is running!"
+        exit 0 
+    else
+    	/usr/local/sge_deploy/venv/bin/uwsgi  --ini  /usr/local/sge_deploy/config.ini
+        echo "Start uwsgi service [OK]"
+    fi
+elif [ $1 = stop ];then
+    killall -9 uwsgi
+    echo "Stop uwsgi service [OK]"
+elif [ $1 = restart ];then
+    killall -9 uwsgi
+    /usr/local/sge_deploy/venv/bin/uwsgi  --ini  /usr/local/sge_deploy/config.ini
+    echo "Restart uwsgi service [OK]"
+else
+    echo "Usages: sh uwsgid.sh [start|stop|restart]"
+fi
