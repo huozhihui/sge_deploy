@@ -23,7 +23,7 @@ from common import utils, exception
 from common.ansible_task import AnsibleTask
 
 REQUIRE_PARAMS = ["sge_master_host"]
-DEFAULT_PARAMS = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "sge_admin_user"]
+DEFAULT_PARAMS = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "sge_admin_user", "queue_name"]
 
 
 class Sge():
@@ -35,6 +35,7 @@ class Sge():
         self.sge_admin_user = self.args.get('sge_admin_user', 'root')
         self.sge_master_host = self.args.get('sge_master_host', {})
         self.sge_execd_hosts = self.args.get('sge_execd_hosts', [])
+        self.queue_name = self.args.get('queue_name', "")
         self._check_params()
         self.extra_var = self._generate_extra_var()
 
@@ -45,8 +46,8 @@ class Sge():
 
     def _generate_extra_var(self):
         extra_var = {}
-        # for params in REQUIRE_PARAMS:
-        #     extra_var[params] = self.__dict__[params]
+        for params in REQUIRE_PARAMS:
+            extra_var[params] = self.__dict__[params]
 
         for params in DEFAULT_PARAMS:
             extra_var[params] = self.__dict__[params]
@@ -90,17 +91,18 @@ class Sge():
         self._add_extra_var()
         return self._run_playbook(task_name, target_hosts, self.extra_var)
 
+    # 先在sge master增加计算节点,然后安装计算节点
+    def master_add_exec(self):
+        task_name = "sge_master_add_exec"
+        target_hosts = self.sge_master_host
+        self._add_extra_var()
+        return self._run_playbook(task_name, target_hosts, self.extra_var)
+
     def client(self, way="install"):
         if not self.sge_execd_hosts:
             raise exception.ParamsMissing("sge_execd_hosts")
-        # 先在sge master增加计算节点,然后安装计算节点
-        if way == "install":
-            task_name = "sge_master_add_exec"
-            target_hosts = self.sge_master_host
-            self._add_extra_var()
-            self._run_playbook(task_name, target_hosts, self.extra_var)
 
         task_name = "sge_client_%s" % way
         target_hosts = self.sge_execd_hosts
         self._add_extra_var()
-        self._run_playbook(task_name, target_hosts, self.extra_var)
+        return self._run_playbook(task_name, target_hosts, self.extra_var)

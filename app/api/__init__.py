@@ -6,15 +6,14 @@ from flask_restful import Api, Resource
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
 
-from app.api.sge_api import SgeClientApi, SgeMasterApi, AddSgeExecApi, SgeClusterApi, SgeAuthApi
+from app.api.sge_api import SgeClientApi, SgeMasterApi, AddSgeExecApi, SgeAuthApi
 from app.api.nfs_api import NfsClientApi, NfsServerApi
 from app.api.nis_api import NisServerApi, NisClientApi
 
 # 设置路由
 api.add_resource(SgeMasterApi, "/sge/master")
 api.add_resource(SgeClientApi, "/sge/client")
-api.add_resource(AddSgeExecApi, "/sge/add_exec")
-api.add_resource(SgeClusterApi, "/sge/cluster")
+api.add_resource(AddSgeExecApi, "/sge/addexec")
 api.add_resource(SgeAuthApi, "/sge/auth")
 
 api.add_resource(NfsServerApi, "/nfs/server")

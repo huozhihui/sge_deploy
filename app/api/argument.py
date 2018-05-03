@@ -17,6 +17,7 @@ def _sge_argument():
     parser.add_argument("sge_cluster_name", type=str, default="rzl")
     parser.add_argument("sge_admin_user", type=str, default="root")
     parser.add_argument("sge_master_host", type=dict, required=True)
+    parser.add_argument("queue_name", type=str)
     parser.add_argument("nis_server_host", type=dict)
     parser.add_argument("nfs_server_host", type=dict)
     parser.add_argument("repo", type=str)
