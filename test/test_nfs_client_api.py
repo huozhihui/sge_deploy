@@ -7,6 +7,7 @@ url = "http://127.0.0.1:5000/api/v1/nfs/client"
 params = {
     'state': 'install',
     'os': 'centos7',
+    'callback_url': "http://127.0.0.1:4000/sge/callback",
     'share_dir': '/opt/aaa',
     'nfs_server_host': {
         "ip": "192.168.1.10",
@@ -26,6 +27,6 @@ header = {'Content-Type': 'application/json'}
 data_str = json.dumps(params)
 r = requests.post(url, data=data_str, headers=header)
 
-print r.url
-print r.text
-print r.status_code
+print "Request url: %s" % r.url
+print "Status code: %s" % r.status_code
+print "Respones: %s" % r.text

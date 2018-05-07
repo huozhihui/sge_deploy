@@ -8,6 +8,6 @@ header = {}
 
 r = requests.get(url, headers=header)
 
-print r.url
-print r.text
-print r.status_code
+print "Request url: %s" % r.url
+print "Status code: %s" % r.status_code
+print "Respones: %s" % r.text
