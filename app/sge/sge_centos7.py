@@ -139,4 +139,9 @@ class SgeClient(Sge):
         return AnsibleTask(task_name, self.extra_var).api_run(target_hosts)
 
     def run(self):
+        # 如果是安装,优先在sge master上做操作,如果操作失败直接返回错误
+        if self._state == "install":
+            result = self.config_master()
+            if result[0].get('status') != "success":
+                return result
         return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)

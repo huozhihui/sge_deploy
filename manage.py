@@ -9,5 +9,5 @@ application = create_app(os.getenv('FLASK_CONFIG') or 'default')
 # manager = Manager(application)
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    application.run(debug=True, port=5000)
     # manager.run()

@@ -9,9 +9,5 @@ from app.repo.repo import Repo
 class RepoApi(Resource):
     def post(self):
         args = argument.repo_parser.parse_args(strict=True)
-        try:
-            repo = Repo(**args)
-            result = repo.run()
-            return {"result": result}
-        except Exception, e:
-            return base.execute_fail(e)
+        instance = Repo(**args)
+        base.generate_thread(instance, **args)

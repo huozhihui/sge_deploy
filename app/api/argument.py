@@ -7,6 +7,7 @@ def _common_argument():
     parser = reqparse.RequestParser()
     parser.add_argument("state", choices=('install', 'uninstall'), required=True)
     parser.add_argument("os", type=str, default="centos7")
+    parser.add_argument("callback_url", type=str)
     return parser
 
 
@@ -69,7 +70,6 @@ def _repo_argument():
     parser.add_argument("repo", type=str, required=True)
     parser.add_argument("target_hosts", type=dict, action='append', required=True)
     return parser
-
 
 
 sge_master_parser = _sge_master_argument()
