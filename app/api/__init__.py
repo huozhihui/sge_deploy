@@ -9,6 +9,7 @@ api = Api(api_bp)
 from app.api.sge_api import SgeClientApi, SgeMasterApi, AddSgeExecApi, SgeAuthApi
 from app.api.nfs_api import NfsClientApi, NfsServerApi
 from app.api.nis_api import NisServerApi, NisClientApi
+from app.api.repo_api import RepoApi
 
 # 设置路由
 api.add_resource(SgeMasterApi, "/sge/master")
@@ -21,3 +22,5 @@ api.add_resource(NfsClientApi, "/nfs/client")
 
 api.add_resource(NisServerApi, "/nis/server")
 api.add_resource(NisClientApi, "/nis/client")
+
+api.add_resource(RepoApi, "/repo")
