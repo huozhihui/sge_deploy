@@ -3,22 +3,17 @@
 import requests
 import json
 
-url = "http://127.0.0.1:5000/api/v1/nfs/client"
+url = "http://127.0.0.1:5000/api/v1/repo"
 params = {
-    'state': 'install',
-    'os': 'centos7',
-    'share_dir': '/opt/aaa',
-    'nfs_server_host': {
-        "ip": "192.168.1.10",
-    },
-    'nfs_client_hosts': [
+    "repo": "http://mirrors.aliyun.com/repo/Centos-7.repo",
+    'target_hosts': [
         {
-            "float_ip": '10.42.12.157',
-            "ip": "192.168.1.13",
-            "hostname": 'sge-client-1',
+            "float_ip": '10.42.12.156',
+            "ip": "192.168.1.10",
+            "hostname": 'nis-server',
             "username": 'root',
             "password": 'root'
-        },
+        }
     ]
 }
 header = {'Content-Type': 'application/json'}

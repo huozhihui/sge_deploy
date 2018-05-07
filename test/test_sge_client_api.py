@@ -3,36 +3,38 @@
 import requests
 import json
 
-url = "http://127.0.0.1:5000/api/v1.0/sge_client"
+url = "http://127.0.0.1:5000/api/v1/sge/client"
+url = "http://10.42.12.160:80/api/v1/sge/client"
 params = {
-    'state': 'install',
-    'os': 'centos7',
-    'sge_install_dir': '/opt',
-    'sge_root_name': 'sge',
-    'sge_cluster_name': 'rzl',
-    'sge_master_hosts': {
-        "10.61.104.20": {
-            "internal_ip": "192.168.0.16",
-            "hostname": 'test-sge-server',
-            "username": 'root',
-            "password": 'root',
-        },
+    "os": "centos7",
+    "state": "install",
+    "sge_install_dir": "/opt",
+    "sge_root_name": "sge",
+    "sge_cluster_name": "rzl",
+    "queue_name": "abc",
+    "sge_master_host": {
+        #"float_ip": "10.42.12.147",
+        "ip": "192.168.1.9",
+        "hostname": "sge-master",
+        "username": "root",
+        "password": "root",
     },
-    'sge_execd_hosts': {
-        "10.61.104.21": {
-            "internal_ip": "192.168.0.10",
-            "hostname": "test-sge-client-1",
-            "username": 'root',
-            "password": 'root'
+    'sge_execd_hosts': [
+        {
+            #"float_ip": "10.42.12.157",
+            "ip": "192.168.1.13",
+            "hostname": "sge-client-1",
+            "username": "root",
+            "password": "root",
         },
-        # "10.61.104.15": {
-        #     "internal_ip": "192.168.0.15",
-        #     "hostname": "test-sge-client-2",
-        #     "username": 'root',
-        #     "password": 'root'
-        # },
-    },
-    'repo': "http://mirrors.ronglian.com/repo/Centos-7.repo"
+        {
+            #"float_ip": "10.42.12.150",
+            "ip": "192.168.1.12",
+            "hostname": "sge-client-2",
+            "username": "root",
+            "password": "root",
+        },
+    ],
 }
 header = {'Content-Type': 'application/json'}
 
