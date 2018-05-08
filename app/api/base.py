@@ -25,11 +25,14 @@ def generate_thread(instance, **kwargs):
 # 通过线程执行任务, 任务完成后调用回调函数
 def do_task(instance, **kwargs):
     requrl = kwargs.get("callback_url", None)
-    result = instance.run()
-    if requrl:
-        callback(requrl, result)
-    else:
-        print result
+    try:
+        result = instance.run()
+        if requrl:
+            callback(requrl, result)
+        else:
+            print result
+    except Exception, e:
+        return execute_fail(e)
 
 
 # 回调函数

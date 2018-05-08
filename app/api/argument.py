@@ -66,7 +66,9 @@ def _nis_client_argument():
 
 
 def _repo_argument():
-    parser = reqparse.RequestParser()
+    parser = _common_argument()
+    parser.remove_argument("state")
+    parser.remove_argument("os")
     parser.add_argument("repo", type=str, required=True)
     parser.add_argument("target_hosts", type=dict, action='append', required=True)
     return parser
