@@ -4,11 +4,14 @@ Description=uWSGI instance to serve sge-deploy
 After=network.target
 
 [Service]
-User=root
-Group=root
+#User=root
+#Group=root
 WorkingDirectory=/usr/local/sge_deploy
-#Environment="PATH=/usr/local/sge_deploy/venv/bin"
-ExecStart=/usr/local/sge_deploy/venv/bin/uwsgi --ini config.ini
+#ExecStart=/usr/local/sge_deploy/venv/bin/uwsgi --ini /usr/local/sge_deploy/config.ini
+#ExecStart=/usr/local/sge_deploy/venv/bin/python /usr/local/sge_deploy/manage.py
+ExecStart=/usr/local/sge_deploy/uwsgid start
+ExecReload=/usr/local/sge_deploy/uwsgid restart
+ExecStop=/usr/local/sge_deploy/uwsgid stop
 
 [Install]
 WantedBy=multi-user.target
