@@ -6,14 +6,14 @@ import urllib2
 import threading
 
 
-def execute_success(msg):
-    return {"success": "true", "msg": msg}
+def execute_success():
+    return {"result": "true"}
 
 
 def execute_fail(e):
     traceback.print_exc()
     err = "%s: %s" % (e.__class__.__name__, e.message)
-    return {"error": err}, 500
+    return {"result": "false", "error": err}, 500
 
 
 # 生成线程
@@ -30,7 +30,8 @@ def do_task(instance, **kwargs):
         if requrl:
             callback(requrl, result)
         else:
-            print result
+            # print result
+            return execute_success()
     except Exception, e:
         return execute_fail(e)
 
