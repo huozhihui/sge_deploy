@@ -4,6 +4,7 @@ import traceback
 import urllib
 import urllib2
 import threading
+import json
 
 
 def execute_success():
@@ -24,7 +25,7 @@ def generate_thread(instance, **kwargs):
 
 # 通过线程执行任务, 任务完成后调用回调函数
 def do_task(instance, **kwargs):
-    requrl = kwargs.get("callback_url", None)
+    requrl = kwargs.get("callbackUrl", None)
     try:
         result = instance.run()
         if requrl:

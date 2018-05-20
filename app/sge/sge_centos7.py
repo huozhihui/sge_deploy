@@ -64,10 +64,11 @@ class SgeMaster(Sge):
         pass
 
     def _custom_extra_var(self):
-        self.extra_var["etc_hosts"] = [{
-            "ip": self.sge_master_host["ip"],
-            "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
-        }]
+        # self.extra_var["etc_hosts"] = [{
+        #     "ip": self.sge_master_host["ip"],
+        #     "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
+        # }]
+        pass
 
     def run(self):
         return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
@@ -126,11 +127,6 @@ class SgeClient(Sge):
         etc_hosts = []
         execd_hostname_list = []
 
-        etc_hosts.append({
-            "ip": self.sge_master_host["ip"],
-            "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
-        })
-
         cluster_client_count = self._get_client_node_num()
         for sge_execd_host in self.sge_execd_hosts:
             name = "%s%s" % (SGE_COMPUTE_HOSTNAME, cluster_client_count)
@@ -145,7 +141,8 @@ class SgeClient(Sge):
         # 增加"etc_hosts"和"sge_execd_host_list"变量
         self.extra_var.update({
             "etc_hosts": etc_hosts,
-            "sge_execd_host_list": ",".join(execd_hostname_list)
+            "sge_execd_host_list": ",".join(execd_hostname_list),
+            "sge_master_ip": self.sge_master_host["ip"]
         })
 
     def config_master(self):
