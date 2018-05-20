@@ -30,17 +30,21 @@ def do_task(instance, **kwargs):
         if requrl:
             callback(requrl, result)
         else:
-            # print result
-            return execute_success()
+            print result
     except Exception, e:
         return execute_fail(e)
 
 
 # 回调函数
 def callback(requrl, result):
-    send_data = urllib.urlencode({"result": result})
+    # send_data = urllib.urlencode({"result": result})
+    send_data = json.dumps(result)
     try:
+        print "Callback url: %s" % requrl
+        print "Send data: %s" % send_data
         req = urllib2.Request(url=requrl, data=send_data)
+        req.add_header('Content-Type', 'application/json')
+        req.get_method = lambda: 'PUT'
         urllib2.urlopen(req).read()
     except Exception, e:
         return execute_fail(e)

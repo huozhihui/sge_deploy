@@ -13,13 +13,15 @@ class SgeAuthApi(Resource):
 
 class SgeMasterApi(Resource):
     def post(self):
-        args = argument.sge_master_parser.parse_args(strict=True)
+        # args = argument.sge_master_parser.parse_args(strict=True)
+        args = argument.sge_master_parser.parse_args()
         instance = SgeMaster(**args)
         base.generate_thread(instance, **args)
+        return base.execute_success()
 
 
 class SgeClientApi(Resource):
     def post(self):
-        args = argument.sge_client_parser.parse_args(strict=True)
+        args = argument.sge_client_parser.parse_args()
         instance = SgeClient(**args)
         base.generate_thread(instance, **args)
