@@ -5,8 +5,7 @@ import random
 import string
 import time
 from common.ansible_api.ansible_api import AnsibleAPI
-
-ANSIBLE_CONFIG_PATH = "/usr/local/ansible_deploy"
+from defaults import ANSIBLE_CONFIG_PATH
 
 
 class AnsibleError(Exception):
@@ -50,7 +49,7 @@ class AnsibleTask():
         with open(self._host_path, 'w') as f:
             f.write("[%s]\n" % self.task_name)
             for d in target_hosts:
-                host_ip = d.get("float_ip", None) or d.get("ip", None)
+                host_ip = d.get("floatIp", None) or d.get("ip", None)
                 username = d.get('username', None)
                 password = d.get('password', None)
                 port = d.get('port', 22)

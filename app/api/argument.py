@@ -7,28 +7,28 @@ def _common_argument():
     parser = reqparse.RequestParser()
     parser.add_argument("state", choices=('install', 'uninstall'), required=True)
     parser.add_argument("os", type=str, default="centos7")
-    parser.add_argument("callback_url", type=str)
+    parser.add_argument("callbackUrl", type=str)
     return parser
 
 
 def _sge_master_argument():
     parser = _common_argument()
-    parser.add_argument("sge_install_dir", type=str, default="/opt")
-    parser.add_argument("sge_root_name", type=str, default="sge")
-    parser.add_argument("sge_cluster_name", type=str, default="rzl")
-    parser.add_argument("sge_admin_user", type=str, default="root")
-    parser.add_argument("sge_master_host", type=dict, required=True)
+    parser.add_argument("sgeInstallDir", type=str, default="/opt")
+    parser.add_argument("sgeRootName", type=str, default="sge")
+    parser.add_argument("sgeClusterName", type=str, default="rzl")
+    parser.add_argument("sgeAdminUser", type=str, default="root")
+    parser.add_argument("sgeMasterHost", type=dict, required=True)
     return parser
 
 
 def _sge_client_argument():
     parser = _common_argument()
-    parser.add_argument("sge_install_dir", type=str, default="/opt")
-    parser.add_argument("sge_root_name", type=str, default="sge")
-    parser.add_argument("sge_cluster_name", type=str, default="rzl")
-    parser.add_argument("sge_master_host", type=dict, required=True)
-    parser.add_argument("queue_name", type=str, default="")
-    parser.add_argument("sge_execd_hosts", type=dict, action='append', required=True)
+    parser.add_argument("sgeInstallDir", type=str, default="/opt")
+    parser.add_argument("sgeRootName", type=str, default="sge")
+    parser.add_argument("sgeClusterName", type=str, default="rzl")
+    parser.add_argument("sgeMasterHost", type=dict, required=True)
+    parser.add_argument("queueName", type=str, default="")
+    parser.add_argument("sgeExecdHosts", type=dict, action='append', required=True)
     return parser
 
 

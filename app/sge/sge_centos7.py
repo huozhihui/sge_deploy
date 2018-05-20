@@ -1,8 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
+import os
 from common.ansible_task import AnsibleTask
 from common import utils, exception
+from common.defaults import CLUSTER_PATH, SGE_MASTER_HOSTNAME, SGE_COMPUTE_HOSTNAME
 
 
 class Sge():
@@ -14,14 +15,12 @@ class Sge():
         sge_master_host = self.__dict__["sge_master_host"]
         sge_exec_hosts = self.__dict__.get("sge_exec_hosts", [])
 
-        for key in ["ip", "hostname"]:
-            if not sge_master_host.has_key(key):
-                raise exception.ParamsMissing("sge_master_host<%s>" % key)
+        if not sge_master_host.has_key("ip"):
+            raise exception.ParamsMissing("sge_master_host<ip>")
 
         for d in sge_exec_hosts:
-            for key in ["ip", "hostname"]:
-                if not d.has_key(key):
-                    raise exception.ParamsMissing("sge_execd_host<%s>" % key)
+            if not d.has_key("ip"):
+                raise exception.ParamsMissing("sge_execd_host<ip>")
 
     def _get_extra_var(self, need_variable_names):
         extra_var = {}
@@ -44,11 +43,11 @@ class SgeMaster(Sge):
 
     def __init__(self, **kwargs):
         self.args = utils.convert(kwargs)
-        self.sge_install_dir = self.args.get('sge_install_dir', '/opt')
-        self.sge_root_name = self.args.get('sge_root_name', 'sge')
-        self.sge_cluster_name = self.args.get('sge_cluster_name', 'rzl')
-        self.sge_admin_user = self.args.get('sge_admin_user', 'root')
-        self.sge_master_host = self.args.get('sge_master_host', {})
+        self.sge_install_dir = self.args.get('sgeInstallDir', '/opt')
+        self.sge_root_name = self.args.get('sgeRootName', 'sge')
+        self.sge_cluster_name = self.args.get('sgeClusterName', 'rzl')
+        self.sge_admin_user = self.args.get('sgeAdminUser', 'root')
+        self.sge_master_host = self.args.get('sgeMasterHost', {})
 
         self.need_variable_names = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "sge_admin_user"]
         self.require_params = ["sge_master_host"]
@@ -62,14 +61,13 @@ class SgeMaster(Sge):
         self._custom_extra_var()
 
     def _custom_check(self):
-        for key in ["ip", "hostname"]:
-            if not self.sge_master_host.has_key(key):
-                raise exception.ParamsMissing("sge_master_host<%s>" % key)
+        pass
 
     def _custom_extra_var(self):
-        self.extra_var["etc_hosts"] = [
-            {key: self.sge_master_host[key] for key in ["ip", "hostname"]}
-        ]
+        self.extra_var["etc_hosts"] = [{
+            "ip": self.sge_master_host["ip"],
+            "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
+        }]
 
     def run(self):
         return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
@@ -89,12 +87,12 @@ class SgeClient(Sge):
 
     def __init__(self, **kwargs):
         self.args = utils.convert(kwargs)
-        self.sge_install_dir = self.args.get('sge_install_dir', '/opt')
-        self.sge_root_name = self.args.get('sge_root_name', 'sge')
-        self.sge_cluster_name = self.args.get('sge_cluster_name', 'rzl')
-        self.sge_master_host = self.args.get('sge_master_host', {})
-        self.sge_execd_hosts = self.args.get('sge_execd_hosts', [])
-        self.queue_name = self.args.get('queue_name', "")
+        self.sge_install_dir = self.args.get('sgeInstallDir', '/opt')
+        self.sge_root_name = self.args.get('sgeRootName', 'sge')
+        self.sge_cluster_name = self.args.get('sgeClusterName', 'rzl')
+        self.sge_master_host = self.args.get('sgeMasterHost', {})
+        self.sge_execd_hosts = self.args.get('sgeExecdHosts', [])
+        self.queue_name = self.args.get('queueName', "")
 
         self.need_variable_names = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "queue_name"]
         self.require_params = ["sge_master_host", "sge_execd_hosts"]
@@ -107,25 +105,42 @@ class SgeClient(Sge):
         self.extra_var = self._get_extra_var(self.need_variable_names)
         self._custom_extra_var()
 
-    def _custom_check(self):
-        for key in ["ip", "hostname"]:
-            if not self.sge_master_host.has_key(key):
-                raise exception.ParamsMissing("sge_master_host<%s>" % key)
+    # 获取集群计算节点个数并更新
+    def _get_client_node_num(self):
+        if not os.path.exists(CLUSTER_PATH):
+            cluster_client_count = 0
+        else:
+            with open(CLUSTER_PATH, "r") as f:
+                cluster_client_count = int(f.read())
 
-        for d in self.sge_execd_hosts:
-            for key in ["ip", "hostname"]:
-                if not d.has_key(key):
-                    raise exception.ParamsMissing("sge_execd_hosts<%s>" % key)
+        new_cluster_count = cluster_client_count + len(self.sge_execd_hosts)
+        with open(CLUSTER_PATH, "w") as f:
+            f.write(str(new_cluster_count))
+
+        return cluster_client_count
+
+    def _custom_check(self):
+        pass
 
     def _custom_extra_var(self):
         etc_hosts = []
         execd_hostname_list = []
 
-        etc_hosts.append({key: self.sge_master_host[key] for key in ["ip", "hostname"]})
+        etc_hosts.append({
+            "ip": self.sge_master_host["ip"],
+            "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
+        })
 
-        for d in self.sge_execd_hosts:
-            etc_hosts.append({key: d[key] for key in ["ip", "hostname"]})
-            execd_hostname_list.append(d["hostname"])
+        cluster_client_count = self._get_client_node_num()
+        for sge_execd_host in self.sge_execd_hosts:
+            name = "%s%s" % (SGE_COMPUTE_HOSTNAME, cluster_client_count)
+            hostname = sge_execd_host.get("hostname", name)
+            etc_hosts.append({
+                "ip": sge_execd_host["ip"],
+                "hostname": hostname
+            })
+            execd_hostname_list.append(hostname)
+            cluster_client_count += 1
 
         # 增加"etc_hosts"和"sge_execd_host_list"变量
         self.extra_var.update({

@@ -25,3 +25,4 @@ class SgeClientApi(Resource):
         args = argument.sge_client_parser.parse_args()
         instance = SgeClient(**args)
         base.generate_thread(instance, **args)
+        return base.execute_success()
