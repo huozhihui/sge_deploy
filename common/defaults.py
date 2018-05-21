@@ -6,8 +6,14 @@ import os
 # ANSIBLE_SIT1_FILE = os.path.join(ANSIBLE_CONFIG_PATH, "sit1.yml")
 # ANSIBLE_SIT2_FILE = os.path.join(ANSIBLE_CONFIG_PATH, "sit2.yml")
 
+# log
+LOG_PATH = "sge.log"
+LOG_FORMAT = "%(asctime)-15s %(levelname)-8s %(filename)s %(lineno)d %(message)s"
+
+# ansible
 ANSIBLE_CONFIG_PATH = "/Users/huozhihui/zhi/ansible_project/ansible_deploy"
 
+# sge cluster
 CLUSTER_PATH = "/Users/huozhihui/temp/cluster_info"
 SGE_MASTER_HOSTNAME = "sge-master"
 SGE_COMPUTE_HOSTNAME = "sge-compute"
