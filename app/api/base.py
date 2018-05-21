@@ -5,6 +5,7 @@ import urllib
 import urllib2
 import threading
 import json
+from retry import retry
 
 
 def execute_success():
@@ -37,6 +38,8 @@ def do_task(instance, **kwargs):
 
 
 # 回调函数
+# 回调失败后，重试3次，重试间隔时间1，5，10，20
+@retry(Exception, tries=4, delay=5, backoff=2)
 def callback(requrl, result):
     # send_data = urllib.urlencode({"result": result})
     send_data = json.dumps(result)
