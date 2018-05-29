@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from flask import current_app
 from flask_restful import Resource
 import argument
 import base
-from app.sge.sge_centos7 import SgeMaster, SgeClient
+from sge.sge_centos7 import SgeMaster, SgeClient
 
 
 class SgeAuthApi(Resource):
@@ -16,7 +17,8 @@ class SgeMasterApi(Resource):
         # args = argument.sge_master_parser.parse_args(strict=True)
         args = argument.sge_master_parser.parse_args()
         instance = SgeMaster(**args)
-        base.generate_thread(instance, **args)
+        log = current_app.logger
+        base.generate_thread(instance, log, **args)
         return base.execute_success()
 
 
@@ -24,5 +26,6 @@ class SgeClientApi(Resource):
     def post(self):
         args = argument.sge_client_parser.parse_args()
         instance = SgeClient(**args)
-        base.generate_thread(instance, **args)
+        log = current_app.logger
+        base.generate_thread(instance, log, **args)
         return base.execute_success()

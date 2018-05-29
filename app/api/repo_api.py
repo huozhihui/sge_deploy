@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from flask_restful import Resource
-import base
 import argument
-from app.repo.repo import Repo
+import base
+from repo.repo import Repo
 
 
 class RepoApi(Resource):

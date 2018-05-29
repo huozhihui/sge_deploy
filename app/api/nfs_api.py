@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from flask_restful import Resource
-import base
 import argument
-from app.nfs.nfs_centos7 import NfsServer, NfsClient
+import base
+from nfs.nfs_centos7 import NfsServer, NfsClient
 
 
 class NfsServerApi(Resource):

@@ -1,9 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from flask_restful import Resource
-import base
 import argument
-from app.nis.nis_centos7 import NisServer, NisClient
+import base
+from nis.nis_centos7 import NisServer, NisClient
 
 
 class NisServerApi(Resource):

@@ -1,14 +1,27 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
-from common.ansible_task import AnsibleTask
+
 from common import utils, exception
-from common.defaults import CLUSTER_PATH, SGE_MASTER_HOSTNAME, SGE_COMPUTE_HOSTNAME
+from common.ansible_task import AnsibleTask
+from common.defaults import CLUSTER_PATH, SGE_COMPUTE_HOSTNAME
 
 
-class Sge():
-    def _check_params(self, require_params):
-        for params in require_params:
+class Sge(object):
+    def __init__(self, **kwargs):
+        self.args = utils.convert(kwargs)
+        self.sge_install_dir = self.args.get('sgeInstallDir', '/opt')
+        self.sge_root_name = self.args.get('sgeRootName', 'sge')
+        self.sge_cluster_name = self.args.get('sgeClusterName', 'rzl')
+        self.sge_master_host = self.args.get('sgeMasterHost', {})
+
+        self.need_variable_names = ["sge_install_dir", "sge_root_name", "sge_cluster_name"]
+        self.require_params = ["sge_master_host"]
+        self._state = self.args.get("state", "install")
+
+    # 检查重要参数
+    def _check_params(self):
+        for params in self.require_params:
             if not self.__dict__[params]:
                 raise exception.ParamsMissing(params)
 
@@ -22,9 +35,10 @@ class Sge():
             if not d.has_key("ip"):
                 raise exception.ParamsMissing("sge_execd_host<ip>")
 
-    def _get_extra_var(self, need_variable_names):
+    # 获取额外变量
+    def _get_extra_var(self):
         extra_var = {}
-        for params in need_variable_names:
+        for params in self.need_variable_names:
             extra_var[params] = self.__dict__[params]
 
         return extra_var
@@ -42,33 +56,15 @@ class SgeMaster(Sge):
     """
 
     def __init__(self, **kwargs):
-        self.args = utils.convert(kwargs)
-        self.sge_install_dir = self.args.get('sgeInstallDir', '/opt')
-        self.sge_root_name = self.args.get('sgeRootName', 'sge')
-        self.sge_cluster_name = self.args.get('sgeClusterName', 'rzl')
+        super(SgeMaster, self).__init__(**kwargs)
         self.sge_admin_user = self.args.get('sgeAdminUser', 'root')
-        self.sge_master_host = self.args.get('sgeMasterHost', {})
 
-        self.need_variable_names = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "sge_admin_user"]
-        self.require_params = ["sge_master_host"]
-        self._check_params(self.require_params)
-        self._custom_check()
+        self.need_variable_names.append("sge_admin_user")
+        self._check_params()
 
-        self._state = self.args.get("state", "install")
         self.task_name = "sge_master_%s" % self._state
         self.target_hosts = [self.sge_master_host]
-        self.extra_var = self._get_extra_var(self.need_variable_names)
-        self._custom_extra_var()
-
-    def _custom_check(self):
-        pass
-
-    def _custom_extra_var(self):
-        # self.extra_var["etc_hosts"] = [{
-        #     "ip": self.sge_master_host["ip"],
-        #     "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
-        # }]
-        pass
+        self.extra_var = self._get_extra_var()
 
     def run(self):
         return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
@@ -87,56 +83,38 @@ class SgeClient(Sge):
     """
 
     def __init__(self, **kwargs):
-        self.args = utils.convert(kwargs)
-        self.sge_install_dir = self.args.get('sgeInstallDir', '/opt')
-        self.sge_root_name = self.args.get('sgeRootName', 'sge')
-        self.sge_cluster_name = self.args.get('sgeClusterName', 'rzl')
-        self.sge_master_host = self.args.get('sgeMasterHost', {})
+        super(SgeClient, self).__init__(**kwargs)
         self.sge_execd_hosts = self.args.get('sgeExecdHosts', [])
         self.queue_name = self.args.get('queueName', "")
 
-        self.need_variable_names = ["sge_install_dir", "sge_root_name", "sge_cluster_name", "queue_name"]
-        self.require_params = ["sge_master_host", "sge_execd_hosts"]
-        self._check_params(self.require_params)
-        self._custom_check()
+        self.need_variable_names.append("queue_name")
+        self.require_params.append("sge_execd_hosts")
+        self._check_params()
 
-        self._state = self.args.get("state", "install")
         self.task_name = "sge_client_%s" % self._state
         self.target_hosts = self.sge_execd_hosts
-        self.extra_var = self._get_extra_var(self.need_variable_names)
+        self.extra_var = self._get_extra_var()
         self._custom_extra_var()
 
-    # 获取集群计算节点个数并更新
-    def _get_client_node_num(self):
+    def _custom_extra_var(self):
+        # 获取集群计算节点个数
         if not os.path.exists(CLUSTER_PATH):
-            cluster_client_count = 0
+            self.compute_count = 0
         else:
             with open(CLUSTER_PATH, "r") as f:
-                cluster_client_count = int(f.read())
+                self.compute_count = int(f.read())
 
-        new_cluster_count = cluster_client_count + len(self.sge_execd_hosts)
-        with open(CLUSTER_PATH, "w") as f:
-            f.write(str(new_cluster_count))
-
-        return cluster_client_count
-
-    def _custom_check(self):
-        pass
-
-    def _custom_extra_var(self):
         etc_hosts = []
         execd_hostname_list = []
-
-        cluster_client_count = self._get_client_node_num()
         for sge_execd_host in self.sge_execd_hosts:
-            name = "%s%s" % (SGE_COMPUTE_HOSTNAME, cluster_client_count)
+            name = "%s%s" % (SGE_COMPUTE_HOSTNAME, self.compute_count)
             hostname = sge_execd_host.get("hostname", name)
             etc_hosts.append({
                 "ip": sge_execd_host["ip"],
                 "hostname": hostname
             })
             execd_hostname_list.append(hostname)
-            cluster_client_count += 1
+            self.compute_count += 1
 
         # 增加"etc_hosts"和"sge_execd_host_list"变量
         self.extra_var.update({
@@ -156,4 +134,10 @@ class SgeClient(Sge):
             result = self.config_master()
             if result[0].get('status') != "success":
                 return result
-        return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
+
+        res = AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
+        if self._state == "install" and res[0].get('status') == "success":
+            # 计算节点部署成功后，记录当前计算节点个数，以便于扩展计算节点时hostname不重复
+            with open(CLUSTER_PATH, "w") as f:
+                f.write(str(self.compute_count))
+        return res

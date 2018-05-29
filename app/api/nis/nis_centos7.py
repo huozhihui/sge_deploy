@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from common.ansible_task import AnsibleTask
 from common import utils, exception
+from common.ansible_task import AnsibleTask
 
 
 class Nis():
