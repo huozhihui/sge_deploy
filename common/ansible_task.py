@@ -3,8 +3,7 @@
 import os
 import random
 import string
-import time
-from common.ansible_api.ansible_api import AnsibleAPI
+from ansible_api.ansible_api import AnsibleAPI
 from defaults import ANSIBLE_CONFIG_PATH
 
 
@@ -95,33 +94,6 @@ class AnsibleTask():
         api.run_playbook(self._extra_var, self._playbook_name)
         self._clear_file(self._host_path)
         return api.get_result()
-
-    def run_and_retry(self, target_hosts):
-        api = AnsibleAPI(self._host_path)
-        if self._run_count <= 3:
-            self._generate_hosts_file(target_hosts)
-            api.run_playbook(self._extra_var, self._playbook_name)
-            self._clear_file(self._host_path)
-            self._res.update(res)
-            # for host, result in res["host_result"].items():
-            #     self._res.update({host: {"state": result["status"], "output": result["output"]}})
-
-            if self._res["code"] != 0:
-                if self._run_count <= 3:
-                    unreachable_target_hosts = {}
-                    for host, result in self._res["host_result"].items():
-                        if result["status"] == "unreachable":
-                            if target_hosts.get(host):
-                                unreachable_target_hosts[host] = target_hosts[host]
-
-                    if unreachable_target_hosts:
-                        time.sleep(5)
-                        self._run_count += 1
-                        self.run_and_retry(unreachable_target_hosts)
-                else:
-                    raise PlaybookExecuteError(self._playbook_name[0])
-            else:
-                return self._res
 
 
 if __name__ == '__main__':

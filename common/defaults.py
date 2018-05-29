@@ -8,7 +8,7 @@ import os
 
 # log
 LOG_PATH = "sge.log"
-LOG_FORMAT = "%(asctime)-15s %(levelname)-8s %(filename)s %(lineno)d %(message)s"
+LOG_FORMAT = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(message)s"
 
 # ansible
 ANSIBLE_CONFIG_PATH = "/Users/huozhihui/zhi/ansible_project/ansible_deploy"
