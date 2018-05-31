@@ -16,16 +16,28 @@ class SgeMasterApi(Resource):
     def post(self):
         # args = argument.sge_master_parser.parse_args(strict=True)
         args = argument.sge_master_parser.parse_args()
-        instance = SgeMaster(**args)
+        task_id = base.generate_task_id()
         log = current_app.logger
-        base.generate_thread(instance, log, **args)
-        return base.execute_success()
+        log.info("taskID: %s" % task_id)
+        try:
+            instance = SgeMaster(**args)
+            base.generate_thread(task_id, instance, log)
+            return base.execute_success(task_id)
+        except Exception, e:
+            log.error(e)
+            return base.execute_fail(task_id, e)
 
 
 class SgeClientApi(Resource):
     def post(self):
         args = argument.sge_client_parser.parse_args()
-        instance = SgeClient(**args)
+        task_id = base.generate_task_id()
         log = current_app.logger
-        base.generate_thread(instance, log, **args)
-        return base.execute_success()
+        log.info("taskID: %s" % task_id)
+        try:
+            instance = SgeClient(**args)
+            base.generate_thread(task_id, instance, log)
+            return base.execute_success(task_id)
+        except Exception, e:
+            log.error(e)
+            return base.execute_fail(task_id, e)

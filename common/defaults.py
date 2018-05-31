@@ -14,6 +14,7 @@ LOG_FORMAT = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(message)s"
 ANSIBLE_CONFIG_PATH = "/Users/huozhihui/zhi/ansible_project/ansible_deploy"
 
 # sge cluster
-CLUSTER_PATH = "/Users/huozhihui/temp/cluster_info"
+CLUSTER_INFO_PATH = "/Users/huozhihui/temp/sge/cluster_info"
+CLUSTER_NODES_NUMBER_PATH = "/Users/huozhihui/temp/sge"
 SGE_MASTER_HOSTNAME = "sge-master"
 SGE_COMPUTE_HOSTNAME = "sge-compute"
