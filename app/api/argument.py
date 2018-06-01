@@ -34,34 +34,34 @@ def _sge_client_argument():
 
 def _nfs_server_argument():
     parser = _common_argument()
-    parser.add_argument("share_dir", type=str, required=True)
-    parser.add_argument("share_ip_address", type=str, required=True)
-    parser.add_argument("share_mode", type=str,
+    parser.add_argument("shareDir", type=str, required=True)
+    parser.add_argument("shareIpAddress", type=str, required=True)
+    parser.add_argument("shareMode", type=str,
                         default="rw,no_root_squash,no_all_squash,sync,anonuid=501,anongid=501")
-    parser.add_argument("nfs_server_host", type=dict, required=True)
+    parser.add_argument("nfsServerHost", type=dict, required=True)
     return parser
 
 
 def _nfs_client_argument():
     parser = _common_argument()
-    parser.add_argument("share_dir", type=str, required=True)
-    parser.add_argument("nfs_server_host", type=dict, required=True)
-    parser.add_argument("nfs_client_hosts", type=dict, action='append', required=True)
+    parser.add_argument("shareDir", type=str, required=True)
+    parser.add_argument("nfsServerHost", type=dict, required=True)
+    parser.add_argument("nfsClientHosts", type=dict, action='append', required=True)
     return parser
 
 
 def _nis_server_argument():
     parser = _common_argument()
-    parser.add_argument("domain_name", type=str, required=True)
-    parser.add_argument("nis_server_host", type=dict, required=True)
+    parser.add_argument("domainName", type=str, required=True)
+    parser.add_argument("nisServerHost", type=dict, required=True)
     return parser
 
 
 def _nis_client_argument():
     parser = _common_argument()
-    parser.add_argument("domain_name", type=str, required=True)
-    parser.add_argument("nis_server_host", type=dict, required=True)
-    parser.add_argument("nis_client_hosts", type=dict, action='append', required=True)
+    parser.add_argument("domainName", type=str, required=True)
+    parser.add_argument("nisServerHost", type=dict, required=True)
+    parser.add_argument("nisClientHosts", type=dict, action='append', required=True)
     return parser
 
 
@@ -70,7 +70,7 @@ def _repo_argument():
     parser.remove_argument("state")
     parser.remove_argument("os")
     parser.add_argument("repo", type=str, required=True)
-    parser.add_argument("target_hosts", type=dict, action='append', required=True)
+    parser.add_argument("targetHosts", type=dict, action='append', required=True)
     return parser
 
 
