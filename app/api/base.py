@@ -6,7 +6,7 @@ import urllib2
 import threading
 import json
 from datetime import datetime
-from retry import retry
+# from retry import retry
 from common.defaults import CLUSTER_INFO_PATH
 
 

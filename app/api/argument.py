@@ -46,6 +46,7 @@ def _nfs_client_argument():
     parser = _common_argument()
     parser.add_argument("shareDir", type=str, required=True)
     parser.add_argument("nfsServerHost", type=dict, required=True)
+    parser.add_argument("mountPoint", type=str)
     parser.add_argument("nfsClientHosts", type=dict, action='append', required=True)
     return parser
 

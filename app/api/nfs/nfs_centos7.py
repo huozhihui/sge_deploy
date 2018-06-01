@@ -76,7 +76,9 @@ class NfsClient(Nfs):
 
     def __init__(self, **kwargs):
         super(NfsClient, self).__init__(**kwargs)
+        self.mount_point = self.args.get('mountPoint', self.share_dir)
         self.nfs_client_hosts = self.args.get('nfsClientHosts', {})
+        self.need_variable_names.extend(["mount_point"])
         self.require_params.append("nfs_client_hosts")
         self._check_params()
 
