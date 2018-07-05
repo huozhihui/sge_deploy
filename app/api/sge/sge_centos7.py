@@ -4,7 +4,7 @@ import os
 
 from common import utils, exception
 from common.ansible_task import AnsibleTask
-from common.defaults import CLUSTER_NODES_NUMBER_PATH, SGE_COMPUTE_HOSTNAME
+from common.defaults import CLUSTER_NODES_NUMBER_PATH, SGE_COMPUTE_HOSTNAME, SGE_MASTER_HOSTNAME
 
 
 class Sge(object):
@@ -65,6 +65,13 @@ class SgeMaster(Sge):
         self.task_name = "sge_master_%s" % self._state
         self.target_hosts = [self.sge_master_host]
         self.extra_var = self._get_extra_var()
+        self._custom_extra_var()
+
+    def _custom_extra_var(self):
+        self.extra_var["etc_hosts"] = [{
+            "ip": self.sge_master_host["ip"],
+            "hostname": self.sge_master_host.get("hostname", SGE_MASTER_HOSTNAME)
+        }]
 
     def run(self):
         return AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
@@ -98,10 +105,11 @@ class SgeClient(Sge):
 
     def _custom_extra_var(self):
         # 获取集群计算节点个数
-        if not os.path.exists(CLUSTER_NODES_NUMBER_PATH):
+        path = os.path.join(CLUSTER_NODES_NUMBER_PATH, "cluster_nodes_number")
+        if not os.path.exists(path):
             self.compute_count = 0
         else:
-            with open(CLUSTER_NODES_NUMBER_PATH, "r") as f:
+            with open(path, "r") as f:
                 self.compute_count = int(f.read())
 
         etc_hosts = []
