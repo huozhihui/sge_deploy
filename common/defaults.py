@@ -7,14 +7,15 @@ import os
 # ANSIBLE_SIT2_FILE = os.path.join(ANSIBLE_CONFIG_PATH, "sit2.yml")
 
 # log
-LOG_PATH = "sge.log"
+LOG_PATH = "/var/log/sge-deploy.log"
 LOG_FORMAT = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(message)s"
 
 # ansible
 ANSIBLE_CONFIG_PATH = "/usr/local/ansible_deploy"
 
 # sge cluster
-CLUSTER_INFO_PATH = "/var/log/sge/cluster_info"
-CLUSTER_NODES_NUMBER_PATH = "/var/log/sge/"
+SGE_CLUSTER_LOG = "/etc/sge_cluster"
+SGE_CLUSTER_TASKS = os.path.join(SGE_CLUSTER_LOG, "task")
+SGE_CLUSTER_NODE_NUMBER = os.path.join(SGE_CLUSTER_LOG, "cluster_nodes_number")
 SGE_MASTER_HOSTNAME = "sge-master"
 SGE_COMPUTE_HOSTNAME = "sge-compute"

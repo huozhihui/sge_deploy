@@ -4,7 +4,8 @@ import os
 
 from common import utils, exception
 from common.ansible_task import AnsibleTask
-from common.defaults import CLUSTER_NODES_NUMBER_PATH, SGE_COMPUTE_HOSTNAME, SGE_MASTER_HOSTNAME
+from common.defaults import SGE_CLUSTER_LOG, SGE_CLUSTER_NODE_NUMBER, \
+    SGE_COMPUTE_HOSTNAME, SGE_MASTER_HOSTNAME
 
 
 class Sge(object):
@@ -105,11 +106,10 @@ class SgeClient(Sge):
 
     def _custom_extra_var(self):
         # 获取集群计算节点个数
-        path = os.path.join(CLUSTER_NODES_NUMBER_PATH, "cluster_nodes_number")
-        if not os.path.exists(path):
+        if not os.path.exists(SGE_CLUSTER_NODE_NUMBER):
             self.compute_count = 0
         else:
-            with open(path, "r") as f:
+            with open(SGE_CLUSTER_NODE_NUMBER, "r") as f:
                 self.compute_count = int(f.read())
 
         etc_hosts = []
@@ -146,9 +146,8 @@ class SgeClient(Sge):
         res = AnsibleTask(self.task_name, self.extra_var).api_run(self.target_hosts)
         if self._state == "install" and res[0].get('status') == "success":
             # 计算节点部署成功后，记录当前计算节点个数，以便于扩展计算节点时hostname不重复
-            if not os.path.exists(CLUSTER_NODES_NUMBER_PATH):
-                os.makedirs(CLUSTER_NODES_NUMBER_PATH)
-            path = os.path.join(CLUSTER_NODES_NUMBER_PATH, "cluster_nodes_number")
-            with open(path, "w") as f:
+            if not os.path.exists(SGE_CLUSTER_LOG):
+                os.makedirs(SGE_CLUSTER_LOG)
+            with open(SGE_CLUSTER_NODE_NUMBER, "w") as f:
                 f.write(str(self.compute_count))
         return res

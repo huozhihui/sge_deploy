@@ -5,9 +5,10 @@ import traceback
 import urllib2
 import threading
 import json
+import random
 from datetime import datetime
 # from retry import retry
-from common.defaults import CLUSTER_INFO_PATH
+from common.defaults import SGE_CLUSTER_TASKS
 
 
 def execute_success(task_id):
@@ -22,25 +23,27 @@ def execute_fail(task_id, e):
 
 # 获取任务ID
 def generate_task_id():
-    return datetime.now().strftime("%Y%m%d%H%M%S")
+    return datetime.now().strftime("%Y%m%d%H%M%S") + str(random.randint(1000, 9999))
 
 
 # 获取任务存放路径
 def get_task_path(task_id):
-    if not os.path.exists(CLUSTER_INFO_PATH):
-        os.makedirs(CLUSTER_INFO_PATH)
-    return os.path.join(CLUSTER_INFO_PATH, task_id)
+    if not os.path.exists(SGE_CLUSTER_TASKS):
+        os.makedirs(SGE_CLUSTER_TASKS)
+    return os.path.join(SGE_CLUSTER_TASKS, task_id)
 
 
 # 保存任务信息
-def save_task_result(task_id, result):
+def save_task_result(task_id, result, log):
     path = get_task_path(task_id)
     with open(path, 'w') as f:
         f.write(json.dumps(result, indent=4))
 
     if os.path.exists(path):
+        log.info("Write task result successfully!")
         return True
     else:
+        log.error("Write task result failed!")
         return False
 
 
@@ -57,7 +60,7 @@ def do_task(task_id, instance, log):
     try:
         result = instance.run()
         log.info("taskResult: %s" % result)
-        save_task_result(task_id, result)
+        save_task_result(task_id, result, log)
     except Exception, e:
         return execute_fail(task_id, e)
 

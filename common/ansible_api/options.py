@@ -24,6 +24,6 @@ options = Options(listtags=False,
                   verbosity=None,
                   check=False,
                   diff=False,
-                  timeout=60,
+                  timeout=180,
                   log_path="/var/log/ansible.log",
                   host_key_checking=False)

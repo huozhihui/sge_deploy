@@ -4,7 +4,7 @@ import os
 import json
 from flask import Blueprint
 from flask_restful import Api, Resource
-from common.defaults import CLUSTER_INFO_PATH
+from common.defaults import SGE_CLUSTER_TASKS
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -17,13 +17,13 @@ from app.api.repo_api import RepoApi
 
 class GetTaskApi(Resource):
     def get(self, id):
-        path = os.path.join(CLUSTER_INFO_PATH, str(id))
+        path = os.path.join(SGE_CLUSTER_TASKS, str(id))
         if not os.path.exists(path):
-            return {"taskStatus": "running", "results": []}
+            return {"taskStatus": "running", "results": [], "taskId": str(id)}
         else:
             with open(path, 'r') as f:
                 result = json.loads(f.read())
-            return {"taskStatus": "completed", "results": result}
+            return {"taskStatus": "completed", "results": result, "taskId": str(id)}
 
 
 # 设置路由
