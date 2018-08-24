@@ -7,7 +7,7 @@ import os
 # ANSIBLE_SIT2_FILE = os.path.join(ANSIBLE_CONFIG_PATH, "sit2.yml")
 
 # log
-LOG_PATH = "/var/log/sge-deploy.log"
+LOG_PATH = "/var/log/sge_cluster_deploy.log"
 LOG_FORMAT = "%(asctime)-15s %(levelname)s %(filename)s %(lineno)d %(message)s"
 
 # ansible
